@@ -1,0 +1,1170 @@
+/* ============================================================================
+   style.css - Laser Engraving Physics-Informed ML Agent
+   Minimal / Professional Analysis Tool Design
+   ============================================================================ */
+
+:root {
+    --bg: #FFFFFF;
+    --bg-subtle: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --text: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+    --accent: #2563EB;
+    --accent-light: #DBEAFE;
+    --accent-dark: #1D4ED8;
+    --success: #059669;
+    --success-light: #D1FAE5;
+    --warning: #D97706;
+    --warning-light: #FEF3C7;
+    --danger: #DC2626;
+    --danger-light: #FEE2E2;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ── */
+.header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.header-left {
+    flex-shrink: 0;
+}
+
+.header-right {
+    flex: 1;
+    max-width: 600px;
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.header h1 .title-sep {
+    color: var(--text-tertiary);
+    font-weight: 400;
+    margin: 0 6px;
+}
+
+.header .subtitle {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.header .data-badge {
+    display: inline-block;
+    color: var(--text-secondary);
+    font-size: 11px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+/* ── Header Pipeline ── */
+.header-pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.header-pipeline-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+
+.header-pipeline-step {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.header-pipeline-step .step-num {
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    min-width: 52px;
+}
+
+.header-pipeline-step .step-title {
+    font-weight: 600;
+    color: var(--text);
+    flex-shrink: 0;
+    min-width: 50px;
+}
+
+.header-pipeline-step .step-desc {
+    color: var(--text-tertiary);
+}
+
+/* ── Container ── */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 32px;
+}
+
+/* ── Section base ── */
+.section-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.section-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+}
+
+.section-body {
+    padding: 20px;
+}
+
+/* ── Pipeline ── */
+.pipeline-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border-light);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.pipeline-step {
+    padding: 16px 20px;
+    background: var(--card-bg);
+}
+
+.pipeline-step .step-num {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pipeline-step .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 4px 0;
+}
+
+.pipeline-step .step-desc {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+}
+
+/* ── Input form ── */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.input-group select,
+.input-group input {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.input-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2394A3B8' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+    padding-right: 16px;
+}
+
+.input-group select:focus,
+.input-group input:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+}
+
+.color-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-left: 4px;
+    border: 1px solid var(--border);
+}
+
+/* ── Button ── */
+.btn-predict {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    letter-spacing: 0.02em;
+}
+
+.btn-predict:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+}
+
+.btn-predict:active { background: var(--accent-dark); }
+.btn-predict:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-outline:hover {
+    border-color: var(--text-tertiary);
+    color: var(--text);
+}
+
+/* ── Loading ── */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
+
+.loading .spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Results ── */
+.results-container { display: none; }
+
+/* ── Engraver cards ── */
+.engraver-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 1000px) {
+    .engraver-grid { grid-template-columns: 1fr; }
+}
+
+.engraver-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s;
+}
+
+.engraver-card:hover { box-shadow: var(--shadow-md); }
+
+.engraver-card.top-rank {
+    border-color: var(--success);
+}
+
+.engraver-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.engraver-header.bg-ir { border-left: 3px solid #475569; }
+.engraver-header.bg-green { border-left: 3px solid #059669; }
+.engraver-header.bg-uv { border-left: 3px solid #7C3AED; }
+
+.engraver-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.engraver-info {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+}
+
+.rank-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rank-badge.rank-top {
+    color: #fff;
+    background: var(--success);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+}
+
+/* ── Score bars ── */
+.score-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.score-bar { margin-bottom: 8px; }
+.score-bar:last-child { margin-bottom: 0; }
+
+.score-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+}
+
+.score-bar-track {
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+.score-bar-fill.confidence { background: var(--accent); }
+.score-bar-fill.suitability { background: var(--success); }
+
+/* ── Conditions ── */
+.conditions-section { padding: 14px 16px; border-bottom: 1px solid var(--border-light); }
+
+.conditions-section h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+
+.cond-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+.cond-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 12px;
+}
+
+.cond-item:last-child { border-bottom: none; }
+
+.cond-item .label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.cond-item .value {
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Physics panel ── */
+.physics-panel {
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.physics-panel h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+
+.physics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 11px;
+}
+
+.physics-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.physics-item .label { color: var(--text-tertiary); }
+.physics-item .value { font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+.threshold-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 8px;
+    border: 1px solid transparent;
+}
+
+.threshold-badge.met {
+    background: var(--success-light);
+    color: var(--success);
+    border-color: var(--success);
+}
+
+.threshold-badge.unmet {
+    background: var(--warning-light);
+    color: var(--warning);
+    border-color: var(--warning);
+}
+
+.corrections {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+}
+
+/* ── Similar conditions ── */
+.similar-section {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.similar-section h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+
+.similar-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.similar-table th {
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+}
+
+.similar-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.similar-table tr:last-child td { border-bottom: none; }
+.similar-table tr:hover td { background: var(--bg-subtle); }
+.similar-table .model-name { font-weight: 600; color: var(--text); }
+
+/* ── Simulation ── */
+.simulation-section {
+    padding: 14px 16px;
+}
+
+.simulation-section h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+}
+
+.sim-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.sim-main, .sim-zoom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 전체 각인 미리보기 숨김 (다시 보이게 하려면 이 라인을 제거하세요) */
+.sim-hidden {
+    display: none !important;
+}
+
+.sim-main canvas, .sim-zoom canvas {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+}
+
+.sim-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-align: center;
+    font-weight: 500;
+}
+
+/* ── History ── */
+.history-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 12px;
+    transition: background 0.1s;
+}
+
+.history-item:hover { background: var(--bg-subtle); }
+.history-item:last-child { border-bottom: none; }
+
+.history-item .time {
+    color: var(--text-tertiary);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+.history-item .input-info {
+    font-weight: 600;
+    color: var(--text);
+    margin: 2px 0;
+}
+
+.history-item .result-info {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ── Error ── */
+.error-msg {
+    background: var(--danger-light);
+    color: var(--danger);
+    padding: 10px 16px;
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+/* ── Input summary card ── */
+.input-summary {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 12px;
+}
+
+.input-summary span {
+    color: var(--text-secondary);
+}
+
+.input-summary strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* ============================================================================
+   Color Swatches - 먼셀 컬러 박스
+   ============================================================================ */
+.color-swatches {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.color-swatch-row {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+}
+
+.color-swatch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.color-swatch-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.color-swatch-box:hover {
+    transform: scale(1.25);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.color-swatch-box.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+    transform: scale(1.2);
+}
+
+.color-swatch-label {
+    font-size: 7px;
+    color: var(--text-tertiary);
+    line-height: 1;
+}
+
+/* ============================================================================
+   Field Description - 필드 설명
+   ============================================================================ */
+.field-desc {
+    margin-top: 4px;
+    padding: 6px 8px;
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--text-tertiary);
+    background: var(--bg-subtle);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+}
+
+/* ============================================================================
+   Header Stats & Admin Button
+   ============================================================================ */
+.header-top-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.header-stats {
+    display: flex;
+    gap: 8px;
+}
+
+.stat-badge {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    background: var(--bg-subtle);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+}
+
+.stat-badge strong {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.btn-admin {
+    background: var(--text);
+    color: white;
+    border: none;
+    padding: 5px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-admin:hover {
+    background: var(--accent);
+}
+
+/* ============================================================================
+   Modal
+   ============================================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-box.modal-large {
+    max-width: 1100px;
+    width: 95%;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--text);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ============================================================================
+   Admin Login Form
+   ============================================================================ */
+.admin-login-form {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.admin-login-error {
+    color: var(--danger);
+    font-size: 12px;
+    padding: 8px;
+    background: var(--danger-light);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+
+/* ============================================================================
+   Admin Tabs
+   ============================================================================ */
+.admin-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.admin-tab {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.admin-tab:hover {
+    color: var(--text-secondary);
+}
+
+.admin-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+/* ============================================================================
+   Admin Table
+   ============================================================================ */
+.admin-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.admin-table-wrap {
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.admin-table th {
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    border-bottom: 2px solid var(--border);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    position: sticky;
+    top: 0;
+    background: var(--card-bg);
+    z-index: 1;
+}
+
+.admin-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.admin-table tr:hover td {
+    background: var(--bg-subtle);
+}
+
+.admin-table-scroll {
+    font-size: 10px;
+}
+
+.admin-table-scroll th,
+.admin-table-scroll td {
+    padding: 4px 6px;
+}
+
+/* ============================================================================
+   Admin Section & Account Form
+   ============================================================================ */
+.admin-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+}
+
+.admin-account-form {
+    max-width: 360px;
+}
+
+.btn-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-danger:hover {
+    background: var(--danger-light);
+}
+
+/* ============================================================================
+   가중치 프리셋 스타일
+   ============================================================================ */
+
+.weight-preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.weight-preset-option {
+    cursor: pointer;
+    display: block;
+}
+
+.weight-preset-option input[type="radio"] {
+    display: none;
+}
+
+.weight-preset-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    transition: all 0.2s ease;
+    background: var(--bg-secondary);
+}
+
+.weight-preset-option input[type="radio"]:checked + .weight-preset-card {
+    border-color: var(--primary);
+    background: var(--primary-light, rgba(59, 130, 246, 0.08));
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.weight-preset-option:hover .weight-preset-card {
+    border-color: var(--text-tertiary);
+}
+
+.weight-preset-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.weight-preset-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.weight-preset-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.weight-preset-values span {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary, #f1f5f9);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.weight-preset-values span strong {
+    color: var(--text);
+}
+
+.weight-explain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.weight-explain-table th {
+    background: var(--bg-tertiary, #f1f5f9);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+}
+
+.weight-explain-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.weight-explain-table td:first-child {
+    color: var(--text);
+    white-space: nowrap;
+}
+
+/* ============================================================================
+   Power Comment - 추천 각인 조건 하단 코멘트
+   ============================================================================ */
+.power-comment {
+    font-size: 11px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    border-radius: var(--radius-sm);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.power-comment.warning {
+    color: #DC2626;
+    background: #FEE2E2;
+    border: 1px solid #FCA5A5;
+}
+
+.power-comment.caution {
+    color: #D97706;
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+}
+
+.power-comment.info {
+    color: #2563EB;
+    background: #DBEAFE;
+    border: 1px solid #93C5FD;
+}
+
+
+/* ── 시각화 섹션 ── */
+.vis-section {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-sm, 6px);
+}
+
+.vis-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary, #64748b);
+    margin-bottom: 6px;
+}
+
+.vis-section canvas {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+}
+
+
+
+
+/* ============================================================================
+   신규 모델 사양 입력 - 한 줄(단일 행) 배치
+   광택/증착은 옵션이 짧으므로 폭을 줄이고, 소재/증착구조에 폭을 더 줌
+   ============================================================================ */
+.input-grid-inline {
+    grid-template-columns: 1.25fr 1.5fr 1.1fr 1.05fr 0.75fr 0.65fr 1.4fr;
+    gap: 12px;
+    align-items: start;
+}
+
+/* 좁은 칸에서 설명 박스가 과도하게 줄바꿈되지 않도록 축소 */
+.input-grid-inline .field-desc {
+    font-size: 9px;
+    padding: 4px 6px;
+    line-height: 1.45;
+}
+
+/* 좁은 색상 칸에서 컬러 스와치가 다음 칸으로 넘치지 않도록 줄바꿈 허용 */
+.color-swatch-row {
+    flex-wrap: wrap;
+}
+
+/* 화면이 좁아지면 기존처럼 자동 줄바꿈 배치로 복귀 */
+@media (max-width: 1200px) {
+    .input-grid-inline {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
