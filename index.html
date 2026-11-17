@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laser Engraving Condition Agent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+<h1>각프로 v2 <span class="title-sep">—</span> AI Laser Condition Optimizer</h1>
+<div class="subtitle">Physics-Informed ML &mdash; Beam-Material Interaction + XGBoost + KNN Blending</div>
+        <div class="data-badge" id="dataBadge">Loading...</div>
+    </div>
+    <div class="header-right" style="max-width:860px;">
+        <div class="header-top-row">
+            <div class="header-stats">
+                <span class="stat-badge">접속자: <strong id="statVisitors">0</strong></span>
+                <span class="stat-badge">예측: <strong id="statPredicts">0</strong></span>
+            </div>
+            <button class="btn-admin" onclick="showAdminLogin()">Admin</button>
+        </div>
+        <div class="header-pipeline">
+            <div class="header-pipeline-title" style="font-size:14px;">분석 3단계</div>
+            <!-- 가로 흐름: 번호 원형 배지 + 짧은 설명 카드 3개, 화살표로 연결 (색상은 원본 변수 사용) -->
+            <div style="display:flex;align-items:stretch;gap:12px;width:100%;font-size:14px;">
+                <div style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;">
+                    <span style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</span>
+                    <span class="step-title" style="font-weight:700;">물리 계산</span>
+                    <span class="step-desc">레이저 조건의 기본값을 물리 공식으로 먼저 계산</span>
+                </div>
+                <span style="align-self:center;font-weight:700;color:var(--accent);">→</span>
+                <div style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;">
+                    <span style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</span>
+                    <span class="step-title" style="font-weight:700;">AI 보정</span>
+                    <span class="step-desc">실측 데이터와 머신러닝으로 값을 다듬음</span>
+                </div>
+                <span style="align-self:center;font-weight:700;color:var(--accent);">→</span>
+                <div style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;">
+                    <span style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</span>
+                    <span class="step-title" style="font-weight:700;">물리 검증</span>
+                    <span class="step-desc">물리적으로 말이 안 되면 경고하고 범위 안으로 맞춤</span>
+                </div>
+            </div>
+            <div style="margin-top:10px;font-size:13px;color:var(--text-secondary);">AI 보정: 실측값이 있으면 그대로 사용 · 유사 데이터는 KNN·ML 반반 · 그 외는 ML 80% + 물리 20%</div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div class="modal-overlay" id="adminLoginModal" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>관리자 로그인</h2>
+            <button class="modal-close" onclick="closeAdminLogin()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="admin-login-form">
+                <div class="input-group">
+                    <label>아이디</label>
+                    <input type="text" id="adminLoginId" placeholder="admin" value="admin">
+                </div>
+                <div class="input-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="adminLoginPw" placeholder="••••••••">
+                </div>
+                <div class="admin-login-error" id="adminLoginError" style="display:none;"></div>
+                <button class="btn-predict" onclick="adminLogin()">로그인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Panel Modal -->
+<div class="modal-overlay" id="adminPanelModal" style="display:none;">
+    <div class="modal-box modal-large">
+        <div class="modal-header">
+            <h2>관리자 모드</h2>
+            <button class="modal-close" onclick="closeAdminPanel()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('access', this)">접속 기록</button>
+                <button class="admin-tab" onclick="switchAdminTab('history', this)">예측 이력</button>
+                <button class="admin-tab" onclick="switchAdminTab('addData', this)">DB 데이터 추가</button>
+                <button class="admin-tab" onclick="switchAdminTab('viewDb', this)">전체 DB 조회</button>
+                <button class="admin-tab" onclick="switchAdminTab('weights', this)">가중치 설정</button>
+                <button class="admin-tab" onclick="switchAdminTab('account', this)">계정 관리</button>
+            </div>
+
+
+            <!-- Tab: Access Log -->
+            <div class="admin-tab-content active" id="tab-access">
+                <div class="admin-toolbar">
+                    <button class="btn-outline" onclick="loadAccessLog()">새로고침</button>
+                    <button class="btn-outline btn-danger" onclick="clearAccessLog()">전체 삭제</button>
+                </div>
+                <div class="admin-table-wrap" id="accessLogTable">로딩 중...</div>
+            </div>
+
+            <!-- Tab: History -->
+            <div class="admin-tab-content" id="tab-history">
+                <div class="admin-toolbar">
+                    <button class="btn-outline" onclick="loadAdminHistory()">새로고침</button>
+                    <button class="btn-outline btn-danger" onclick="clearHistoryAdmin()">전체 삭제</button>
+                </div>
+                <div class="admin-table-wrap" id="adminHistoryTable">로딩 중...</div>
+            </div>
+
+            <!-- Tab: Add Data -->
+            <div class="admin-tab-content" id="tab-addData">
+                <h3 class="admin-section-title">사양 입력 + 레이저 조건 입력</h3>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>모델명</label>
+                        <input type="text" id="dbModelName" placeholder="예: M17 5G">
+                    </div>
+                    <div class="input-group">
+                        <label>색상</label>
+                        <select id="dbColor">
+                            <option value="BLACK">BLACK</option>
+                            <option value="WHITE">WHITE</option>
+                            <option value="GRAY">GRAY</option>
+                            <option value="R">R</option>
+                            <option value="YR">YR</option>
+                            <option value="Y">Y</option>
+                            <option value="GY">GY</option>
+                            <option value="G">G</option>
+                            <option value="BG">BG</option>
+                            <option value="B">B</option>
+                            <option value="PB">PB</option>
+                            <option value="P">P</option>
+                            <option value="RP">RP</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>광택</label>
+                        <select id="dbGloss">
+                            <option value="유광">유광</option>
+                            <option value="무광">무광</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>증착</label>
+                        <select id="dbDeposition">
+                            <option value="1">다이렉트 증착</option>
+                            <option value="2">필름전면 증착</option>
+                            <option value="3" selected>필름양면 증착</option>
+                            <option value="4">필름배면 증착</option>
+                            <option value="5">증착없음</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>증착구조</label>
+                        <select id="dbDepositionStructure">
+                            <option value="">선택안함</option>
+                            <option value="금속">금속</option>
+                            <option value="인듐">인듐</option>
+                            <option value="산화물">산화물</option>
+                            <option value="순수인쇄">순수인쇄</option>
+                            <option value="UV몰딩_Ti3O5">UV몰딩_Ti3O5</option>
+                            <option value="UV몰딩_INK">UV몰딩_INK</option>
+                            <option value="GFRP_PET">GFRP_PET</option>
+                            <option value="GFRP_INK">GFRP_INK</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>소재</label>
+                        <select id="dbMaterial">
+                            <option value="GLASTIC">GLASTIC</option>
+                            <option value="GLASS">GLASS</option>
+                            <option value="GFRP">GFRP</option>
+                            <option value="AL">AL</option>
+                            <option value="사출">사출</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>컬러톤</label>
+                        <select id="dbColorTone">
+                            <option value="LIGHT">LIGHT</option>
+                            <option value="NORMAL" selected>NORMAL</option>
+                            <option value="DEEP">DEEP</option>
+                            <option value="NEUTRAL">NEUTRAL</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>각인기</label>
+                        <select id="dbEngraver">
+                            <option value="IR">IR</option>
+                            <option value="GREEN">GREEN</option>
+                            <option value="UV">UV</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Power (%)</label>
+                        <input type="number" id="dbPower" value="50" min="0" max="100" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label>Frequency (kHz)</label>
+                        <input type="number" id="dbFrequency" value="50" min="0" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label>Mark Speed (mm/s)</label>
+                        <input type="number" id="dbMarkSpeed" value="500" min="0" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label>Jump Speed (mm/s)</label>
+                        <input type="number" id="dbJumpSpeed" value="1000" min="0" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label>Poly Delay</label>
+                        <input type="number" id="dbPolyDelay" value="0" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Pulse Width (ns)</label>
+                        <input type="number" id="dbPulseWidth" value="10" min="0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Hatch1 (mm)</label>
+                        <input type="number" id="dbHatch1" value="0.06" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Hatch2 (mm)</label>
+                        <input type="number" id="dbHatch2" value="0.06" min="0" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Mark Count 1</label>
+                        <input type="number" id="dbMarkCount1" value="1" min="0" max="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Mark Count 2</label>
+                        <input type="number" id="dbMarkCount2" value="1" min="0" max="1" step="1">
+                    </div>
+                </div>
+                <div id="dbEditBanner" style="display:none;margin-top:12px;padding:8px 12px;background:var(--warning-bg, rgba(255,193,7,0.15));border:1px solid var(--warning, #ffc107);border-radius:6px;font-size:12px;color:var(--warning, #ffc107);">
+                    ⚠ 수정 모드 — 데이터 변경 후 "수정 저장"을 누르세요.
+                </div>
+                <div style="margin-top:16px;">
+                    <button class="btn-predict" id="dbSaveBtn" onclick="addDBEntry()">DB에 저장</button>
+                    <button class="btn-outline" id="dbCancelBtn" onclick="cancelEditDB()" style="display:none;margin-left:8px;">수정 취소</button>
+                </div>
+                <div id="addDataResult" style="margin-top:10px;"></div>
+            </div>
+
+            <!-- Tab: View DB -->
+            <div class="admin-tab-content" id="tab-viewDb">
+                <div class="admin-toolbar">
+                    <button class="btn-outline" onclick="loadFullDB()">새로고침</button>
+                </div>
+                <div class="admin-table-wrap" id="fullDbTable">로딩 중...</div>
+            </div>
+
+            <!-- Tab: Weights -->
+            <div class="admin-tab-content" id="tab-weights">
+                <h3 class="admin-section-title">적합도 평가 가중치 프리셋</h3>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;">
+                    라디오 버튼으로 프리셋을 선택하고 "적용" 버튼을 누르면 <strong>즉시 다음 예측부터 적용</strong>됩니다.<br>
+                    서버 재시작 없이 실시간으로 반영됩니다.
+                </p>
+                <div class="weight-preset-list" id="weightPresetList">
+                    <label class="weight-preset-option">
+                        <input type="radio" name="weightPreset" value="db_first" checked>
+                        <div class="weight-preset-card">
+                            <div class="weight-preset-title">DB 우선 (기본)</div>
+                            <div class="weight-preset-desc">실측 데이터 최우선 — 현장 사용 실적이 많은 각인기 추천</div>
+                            <div class="weight-preset-values">
+                                <span>DB빈도 <strong>55%</strong></span>
+                                <span>파워 <strong>15%</strong></span>
+                                <span>정밀도 <strong>10%</strong></span>
+                                <span>HAZ <strong>10%</strong></span>
+                                <span>흡수율 <strong>10%</strong></span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="weight-preset-option">
+                        <input type="radio" name="weightPreset" value="balanced">
+                        <div class="weight-preset-card">
+                            <div class="weight-preset-title">균형형</div>
+                            <div class="weight-preset-desc">모든 항목을 균형있게 반영</div>
+                            <div class="weight-preset-values">
+                                <span>DB빈도 <strong>30%</strong></span>
+                                <span>파워 <strong>20%</strong></span>
+                                <span>정밀도 <strong>15%</strong></span>
+                                <span>HAZ <strong>15%</strong></span>
+                                <span>흡수율 <strong>20%</strong></span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="weight-preset-option">
+                        <input type="radio" name="weightPreset" value="physics_first">
+                        <div class="weight-preset-card">
+                            <div class="weight-preset-title">물리 우선</div>
+                            <div class="weight-preset-desc">물리 이론/문헌 데이터 중심 — 흡수율·HAZ·정밀도 우선</div>
+                            <div class="weight-preset-values">
+                                <span>DB빈도 <strong>10%</strong></span>
+                                <span>파워 <strong>20%</strong></span>
+                                <span>정밀도 <strong>20%</strong></span>
+                                <span>HAZ <strong>20%</strong></span>
+                                <span>흡수율 <strong>30%</strong></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <button class="btn-predict" onclick="applyWeightPreset()" style="margin-top:16px;">적용</button>
+                <div id="weightResult" style="margin-top:10px;"></div>
+
+                <div class="weight-explain" style="margin-top:24px;">
+                    <h4 style="margin-bottom:10px;">항목별 설명</h4>
+                    <table class="weight-explain-table">
+                        <thead>
+                            <tr><th>항목</th><th>늘리면</th><th>줄이면</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>DB 빈도</strong></td>
+                                <td>실제 현장 사용 실적이 많은 각인기가 우선 추천됨</td>
+                                <td>문헌/이론 기반 평가 비중 증가</td>
+                            </tr>
+                            <tr>
+                                <td><strong>파워</strong></td>
+                                <td>출력이 높은 각인기(IR 20W)가 유리해짐</td>
+                                <td>출력이 낮아도 정밀도/흡수율 높은 각인기 유리</td>
+                            </tr>
+                            <tr>
+                                <td><strong>정밀도</strong></td>
+                                <td>스팟이 작은 각인기(UV 20μm)가 유리해짐</td>
+                                <td>스팟 크기 영향 감소</td>
+                            </tr>
+                            <tr>
+                                <td><strong>HAZ</strong></td>
+                                <td>열영향부가 적은 각인기(UV)가 유리해짐</td>
+                                <td>열 손상 고려도 감소</td>
+                            </tr>
+                            <tr>
+                                <td><strong>흡수율</strong></td>
+                                <td>흡수율이 높은 각인기(특정 소재에서 UV)가 유리해짐</td>
+                                <td>흡수율 추정치의 영향 감소 (정확하지 않은 데이터)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Account -->
+            <div class="admin-tab-content" id="tab-account">
+
+                <h3 class="admin-section-title">관리자 계정 수정</h3>
+                <div class="admin-account-form">
+                    <div class="input-group">
+                        <label>새 아이디</label>
+                        <input type="text" id="newAdminId" placeholder="admin">
+                    </div>
+                    <div class="input-group">
+                        <label>새 비밀번호</label>
+                        <input type="password" id="newAdminPw" placeholder="••••••••">
+                    </div>
+                    <div class="input-group">
+                        <label>비밀번호 확인</label>
+                        <input type="password" id="newAdminPwConfirm" placeholder="••••••••">
+                    </div>
+                    <button class="btn-predict" onclick="updateAdminAccount()">계정 수정</button>
+                    <div id="accountResult" style="margin-top:10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Input Form -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>신규 모델 사양 입력</h2>
+        </div>
+        <div class="section-body">
+            <div class="input-grid input-grid-inline">
+                <div class="input-group">
+                    <label>모델명</label>
+                    <input type="text" id="modelName" placeholder="예: M17 5G">
+                </div>
+                <div class="input-group">
+                    <label>소재</label>
+                    <select id="material" onchange="onMaterialChange()">
+                        <option value="">선택</option>
+                        <option value="GLASTIC">GLASTIC (글래스틱)</option>
+                        <option value="GLASS">GLASS (유리)</option>
+                        <option value="GFRP">GFRP (유리섬유강화플라스틱)</option>
+                        <option value="AL">AL (알루미늄)</option>
+                        <option value="사출">사출 (사출성형 플라스틱)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>색상 (Munsell) <span class="color-swatch" id="colorSwatch"></span></label>
+                    <select id="color" onchange="onColorChange()">
+                        <option value="">선택</option>
+                        <option value="BLACK">BLACK - 검정</option>
+                        <option value="WHITE">WHITE - 흰색</option>
+                        <option value="GRAY">GRAY - 회색</option>
+                        <option value="R">R - Red</option>
+                        <option value="YR">YR - Yellow-Red</option>
+                        <option value="Y">Y - Yellow</option>
+                        <option value="GY">GY - Green-Yellow</option>
+                        <option value="G">G - Green</option>
+                        <option value="BG">BG - Blue-Green</option>
+                        <option value="B">B - Blue</option>
+                        <option value="PB">PB - Purple-Blue</option>
+                        <option value="P">P - Purple</option>
+                        <option value="RP">RP - Red-Purple</option>
+                    </select>
+                    <div class="color-swatches" id="colorSwatches"></div>
+                </div>
+                <div class="input-group">
+                    <label>컬러톤</label>
+                    <select id="colorTone">
+                        <option value="LIGHT">LIGHT</option>
+                        <option value="NORMAL" selected>NORMAL</option>
+                        <option value="DEEP">DEEP</option>
+                        <option value="NEUTRAL">NEUTRAL</option>
+                    </select>
+                    <div class="field-desc">
+                        LIGHT : 컬러 연함<br>
+                        NORMAL : 컬러 중간<br>
+                        DEEP : 컬러 진함<br>
+                        NEUTRAL : 블랙, 그레이, 화이트
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>광택</label>
+                    <select id="gloss">
+                        <option value="">선택</option>
+                        <option value="유광">유광</option>
+                        <option value="무광">무광</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>증착</label>
+                    <select id="deposition" onchange="onDepositionChange()">
+                        <option value="">선택</option>
+                        <option value="1">다이렉트 증착</option>
+                        <option value="2">필름전면 증착</option>
+                        <option value="3" selected>필름양면 증착</option>
+                        <option value="4">필름배면 증착</option>
+                        <option value="5">증착없음</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>증착구조</label>
+                    <select id="depositionStructure">
+                        <option value="">선택안함 (구조 무관)</option>
+                        <option value="금속">금속</option>
+                        <option value="인듐">인듐</option>
+                        <option value="산화물">산화물</option>
+                        <option value="순수인쇄">순수인쇄</option>
+                        <option value="UV몰딩_Ti3O5">UV몰딩_Ti3O5</option>
+                        <option value="UV몰딩_INK">UV몰딩_INK</option>
+                        <option value="GFRP_PET">GFRP_PET</option>
+                        <option value="GFRP_INK">GFRP_INK</option>
+                    </select>
+                    <div class="field-desc" id="depositionStructureDesc">
+                        GLASS : 인듐·순수인쇄·산화물·금속<br>GFRP : GFRP_INK·GFRP_PET·UV몰딩
+                    </div>
+                </div>
+            </div>
+            <button class="btn-predict" id="btnPredict" onclick="predict()">
+                최적 레이저 조건 분석
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loadingDiv" style="display:none;">
+        <div class="spinner"></div>
+        <p>물리 엔진 + ML 모델 분석 중...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="errorDiv" style="display:none;"></div>
+
+    <!-- Results -->
+    <div class="results-container" id="resultsContainer">
+        <!-- Results will be rendered here -->
+    </div>
+
+</div>
+
+
+<script src="app.js"></script>
+<script src="agent_intro.js" data-video-key="각프로V2"></script>
+</body>
+</html>
